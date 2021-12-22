@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const authController = require("../controllers/authController");
 const isAuthenticated = require("../middlewares/auth");
+const passport = require("passport");
 
 // REGISTER A USER
 router.post("/register", authController.register);

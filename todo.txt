@@ -37,3 +37,4 @@ Comments Endpoints
 
 [+] Client Record Image uploading
 [+] Social Integration facebook and gmail
+[+] Web Scraping Covid Data from mohp

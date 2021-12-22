@@ -1,6 +1,9 @@
 const router = require("express").Router();
 const userController = require("../controllers/userController");
 
+// Create a person
+router.post("/", userController.create);
+
 // Get all expert user
 router.get("/experts", userController.getExperts);
 

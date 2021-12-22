@@ -20,10 +20,13 @@ const authController = {
   register: async (req, res, next) => {
     try {
       // GENERATE HASHED PASSWORD
+      console.log(req.body);
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
       const userExist = await User.findOne({ email: req.body.email });
+      const personExist = await User.findOne({ majorId: req.body.majorId });
+      console.log(personExist);
 
       if (userExist) {
         return next(
@@ -32,7 +35,10 @@ const authController = {
           )
         );
       }
-
+      if (personExist == null) {
+        // throw CustomErrorHandler.notFound("Person with id not found.");
+        return res.status(404).json({ Error: "Person with id not found" });
+      }
       // CREATE NEW PERSON
       const newPerson = new Person({
         firstName: req.body.firstName,
@@ -64,7 +70,8 @@ const authController = {
       return res.status(200).json({ user, accessToken, refreshToken });
     } catch (error) {
       console.log("error :>> ", error);
-      return next(CustomErrorHandler.serverError());
+      // return next(CustomErrorHandler.serverError());
+      return res.status(500).json("Something went wrong");
     }
   },
 

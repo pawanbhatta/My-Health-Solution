@@ -1,8 +1,30 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const Person = require("../models/Person");
+const CustomErrorHandler = require("../services/CustomErrorHandler");
 
 const userController = {
+  create: async (req, res, next) => {
+    const person = await Person.findById(req.body.majorId);
+
+    if (person)
+      return CustomErrorHandler.alreadyExist(
+        "Person with given ID already exists"
+      );
+
+    const newPerson = new Person({
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      age: req.body.age,
+      address: req.body.address,
+      majorId: req.body.majorId,
+    });
+
+    const savedPerson = await newPerson.save();
+
+    res.status(200).json(savedPerson);
+  },
+
   update: async (req, res) => {
     if (req.body.userId === req.params.id || req.body.isExpert) {
       if (req.body.password) {
