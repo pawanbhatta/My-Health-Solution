@@ -5,13 +5,6 @@ const CustomErrorHandler = require("../services/CustomErrorHandler");
 
 const userController = {
   create: async (req, res, next) => {
-    const person = await Person.findById(req.body.majorId);
-
-    if (person)
-      return CustomErrorHandler.alreadyExist(
-        "Person with given ID already exists"
-      );
-
     const newPerson = new Person({
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -22,7 +15,9 @@ const userController = {
 
     const savedPerson = await newPerson.save();
 
-    res.status(200).json(savedPerson);
+    res
+      .status(200)
+      .json({ person: savedPerson, message: "Person Created Successfully" });
   },
 
   update: async (req, res) => {
@@ -153,7 +148,9 @@ const userController = {
         majorId,
       };
 
-      return res.status(200).json(data);
+      return res
+        .status(200)
+        .json({ person: data, message: "User has been registered" });
     } catch (error) {
       return res.status(500).json(error);
     }

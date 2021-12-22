@@ -1,9 +1,11 @@
 Authentication Endpoints
+************************* Client + Server Implemented **********
 [-] Register
 [-] Login
 [-] Log Out
 [-] Refresh Token
 
+************************* Client + Server Implemented **********
 Users Endpoints
 [-] Get all Expert Users 
 [-] Get all People
@@ -32,9 +34,17 @@ Comments Endpoints
 [-] Delete the Comment    -- issue : comment not deleting from questions's comments array
 [-] Get Comments of a particular Question
 
-[-] person routes isVaccinated not set yet
 
+[-] person routes isVaccinated not set yet 
 
-[+] Client Record Image uploading
-[+] Social Integration facebook and gmail
-[+] Web Scraping Covid Data from mohp
+[+] Create client side for each above Endpoints (keep rechecking)
+
+[+] Client Record Image uploading               
+[+] Web Scraping Covid Data from mohp           **
+[+] Question image posting
+[+] Answer Image posting
+[+] User Image posting
+[+] Chatbot             
+[+] Voice Assistant   
+
+[+] Social Integration facebook and gmail       cancel

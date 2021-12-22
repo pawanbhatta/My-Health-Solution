@@ -10,6 +10,10 @@ const QuestionSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    image: {
+      type: String,
+      default: "",
+    },
     upVote: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     downVote: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],

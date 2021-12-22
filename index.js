@@ -1,6 +1,6 @@
 const dotenv = require("dotenv");
 dotenv.config();
-require("./passport");
+// require("./passport");
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -8,12 +8,14 @@ const morgan = require("morgan");
 const cors = require("cors");
 const cookieSession = require("cookie-session");
 const passport = require("passport");
-// const { MONGO_URL, APP_PORT } = process.env;
+const { MONGO_URL, APP_PORT } = process.env;
+const Grid = require("gridfs-stream");
+const path = require("path");
 
 // middlewares
 app.use(express.json());
 app.use(morgan("common"));
-// app.use(cors());
+app.use(cors());
 // app.use(
 //   cors({
 //     origin: "http://localhost:5000",
@@ -21,7 +23,7 @@ app.use(morgan("common"));
 //     credentials: true,
 //   })
 // );
-app.set("trust proxy", true);
+// app.set("trust proxy", true);
 app.use(
   cookieSession({
     name: "session",
@@ -41,7 +43,7 @@ const commentRoutes = require("./routes/comments");
 
 // Create mongo connection
 mongoose.connect(
-  "mongodb+srv://pawan:pawanbhai@cluster0.mqngs.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+  MONGO_URL,
   {
     useUnifiedTopology: true,
     useNewUrlParser: true,
@@ -49,6 +51,73 @@ mongoose.connect(
   },
   () => console.log("Connected to DB!")
 );
+
+const conn = mongoose.createConnection(MONGO_URL);
+
+// Init gfs
+let gfs;
+
+conn.once("open", () => {
+  // Init stream
+  gfs = Grid(conn.db, mongoose.mongo);
+  gfs.collection("PostImages");
+});
+
+const { GridFsStorage } = require("multer-gridfs-storage");
+const multer = require("multer");
+
+// create storage engine
+const fsStorage = new GridFsStorage({
+  url: MONGO_URL,
+  file: (req, file) => {
+    const { type } = req.query;
+
+    let filename = type + "." + Date.now() + path.extname(file.originalname);
+    let isUser = false;
+    let isQuestion = false;
+    let isComment = false;
+
+    if (type === "user") {
+      isUser = true;
+      bucketName = "UserImages";
+    } else if (type === "question") {
+      isQuestion = true;
+      bucketName = "QuestionImages";
+    } else {
+      isComment = true;
+      bucketName = "CommentImages";
+    }
+
+    return {
+      filename,
+      bucketName,
+      metadata: {
+        bucketName,
+        type: req.query.type,
+        originalname: file.originalname,
+        username,
+        isProfile,
+        isCover,
+        isPost,
+        postId,
+      },
+    };
+  },
+});
+
+const fsUpload = multer({ storage: fsStorage });
+
+// To upload an image
+app.post("/api/upload", fsUpload.single("file"), async (req, res) => {
+  try {
+    return res.status(200).json({
+      message: "File uploaded successfully",
+      file: req.file,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 app.get("/", (req, res) => {
   res.send("Hello from My-Health-Solution");

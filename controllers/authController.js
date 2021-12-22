@@ -25,8 +25,8 @@ const authController = {
       const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
       const userExist = await User.findOne({ email: req.body.email });
-      const personExist = await User.findOne({ majorId: req.body.majorId });
-      console.log(personExist);
+      const person = await User.findOne({ majorId: req.body.majorId });
+      console.log(person);
 
       if (userExist) {
         return next(
@@ -35,26 +35,27 @@ const authController = {
           )
         );
       }
-      if (personExist == null) {
-        // throw CustomErrorHandler.notFound("Person with id not found.");
-        return res.status(404).json({ Error: "Person with id not found" });
-      }
+      // if (personExist === null) {
+      //   // throw CustomErrorHandler.notFound("Person with id not found.");
+      //   console.log("person", personExist);
+      //   return res.status(404).json({ Error: "Person with id not found" });
+      // }
       // CREATE NEW PERSON
-      const newPerson = new Person({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        age: req.body.age,
-        address: req.body.address,
-        majorId: req.body.majorId,
-      });
+      console.log("here");
+      // const newPerson = new Person({
+      //   firstName: req.body.firstName,
+      //   lastName: req.body.lastName,
+      //   age: req.body.age,
+      //   address: req.body.address,
+      //   majorId: req.body.majorId,
+      // });
 
-      const person = await newPerson.save();
+      // const person = await newPerson.save();
 
       // CREATE NEW USER
       const newUser = new User({
         email: req.body.email,
         password: hashedPassword,
-        isParent: req.body.isParent,
         person: person._id,
         isExpert: req.body.isExpert,
       });
@@ -77,8 +78,9 @@ const authController = {
 
   login: async (req, res, next) => {
     try {
+      console.log("server login");
       const user = await User.findOne({ email: req.body.email });
-
+      console.log("user", user);
       if (!user)
         return next(
           CustomErrorHandler.notFound("User with given username Not Found")
@@ -96,7 +98,7 @@ const authController = {
       const refreshToken = generateRefreshToken(user);
 
       refreshTokens.push(refreshToken);
-
+      console.log("data", user, accessToken, refreshToken);
       return res.status(200).json({ user, accessToken, refreshToken });
     } catch (error) {
       console.log("error :>> ", error);

@@ -26,7 +26,7 @@ const UserSchema = new mongoose.Schema(
     // This vaccine is for - your children or yourself
     isParent: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     children: [{ type: mongoose.Schema.Types.ObjectId, ref: "Person" }],
   },

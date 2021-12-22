@@ -12,13 +12,7 @@ passport.use(
     clientSecret: GOOGLE_CLIENT_SECRET,
     callbackURL: "http://localhost:5000/auth/google/callback",
   }),
-  (accessToken, refreshToken, profile, cb) => {
-    const user = {
-      profilePicture: profile.photos[0],
-    };
-    user.save();
-    // User.findOrCreate({ googleId: profile.id }, (err, user) => cb(err, user))
-  }
+  (accessToken, refreshToken, profile, done) => done(null, profile)
 );
 
 passport.serializeUser((user, done) => {
